@@ -9,5 +9,6 @@ export const GET_PRODUCTS = gql`
     brand
     link
     price
+    img
   }
 }`

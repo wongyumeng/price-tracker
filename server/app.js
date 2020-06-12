@@ -18,6 +18,7 @@ var schema = buildSchema(`
     name: String
     link: String
     price: String
+    img: String
   }
   type Query {
     getProducts: [Product],

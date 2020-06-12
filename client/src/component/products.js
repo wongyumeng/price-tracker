@@ -32,13 +32,15 @@ const Products = (props) => {
     <Card>
       <Card.Img src={product.img} />
       <Card.Body>
+        <Card.Title>{product.brand}</Card.Title>
         <Card.Text>
           {product.name}
         </Card.Text>
+        <Card.Text>
+          {product.price}
+        </Card.Text>
+        <a href={product.link} class=" stretched-link"/>
       </Card.Body>
-      <Card.Footer>
-        <small className="text-muted">Last updated 3 mins ago</small>
-      </Card.Footer>
     </Card>
   );
   return (
