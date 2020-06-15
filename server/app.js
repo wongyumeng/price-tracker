@@ -33,7 +33,8 @@ var schema = buildSchema(`
 `);
 
 var root = {
-  getProducts: () => queryDB()
+  getProducts: () => getAllProduct(),
+  getProductInfo: (req) => getProduct(req)
 };
 
 var app = express();
@@ -71,7 +72,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-async function queryDB() {
+async function getAllProduct() {
   const mongoURL = "mongodb://localhost:27017/"
   const dbName = "test";
   const collectionName = "product";
@@ -81,6 +82,25 @@ async function queryDB() {
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
     const result = await collection.find({}).toArray();
+    return result;
+  } catch(e) {
+    console.error(e);
+  } finally {
+    client.close();
+  }
+}
+
+async function getProduct(req) {
+  const mongoURL = "mongodb://localhost:27017/"
+  const dbName = "test";
+  const collectionName = "product";
+  let client;
+  console.log(req.id);
+  try {
+    client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.findOne({ id: String(req.id) });
     return result;
   } catch(e) {
     console.error(e);

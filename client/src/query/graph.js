@@ -11,4 +11,17 @@ export const GET_PRODUCTS = gql`
     price
     img
   }
-}`
+}`;
+
+export const GET_PRODUCT = gql`
+query($id: Int) {
+  getProductInfo(id: $id) {
+    id
+    name
+    shop
+    brand
+    link
+    price
+    img
+  }
+}`;
