@@ -22,7 +22,7 @@ var schema = buildSchema(`
   }
   type Query {
     getProducts: [Product],
-    getProductInfo(id: Int): Product
+    getProductInfo(id: String): Product
   }
   type Mutation {
     updateProductInfo(id: String, shop: String, brand: String, name: String, url: String, price: String): Boolean

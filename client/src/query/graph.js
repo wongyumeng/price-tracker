@@ -14,7 +14,7 @@ export const GET_PRODUCTS = gql`
 }`;
 
 export const GET_PRODUCT = gql`
-query($id: Int) {
+query($id: String) {
   getProductInfo(id: $id) {
     id
     name

@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PRODUCTS } from "../query/graph";
 import CardDeck from 'react-bootstrap/CardDeck'
-
+import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card'
 
 
@@ -39,7 +39,7 @@ const Products = (props) => {
         <Card.Text>
           {product.price}
         </Card.Text>
-        <a href={product.link} class=" stretched-link"/>
+        <Link class=" stretched-link" to={`/product/${product.id}`}></Link>
       </Card.Body>
     </Card>
   );
