@@ -1,3 +1,3 @@
-# price-comparison
+# price-tracker
 
 WIP
