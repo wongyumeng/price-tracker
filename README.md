@@ -11,7 +11,10 @@ WIP
 * Serve images from local server
 * caching?
 * session and cookies?
+* authentication
+* authorization
 * search
+* mailing
 
 ## Research later
 
