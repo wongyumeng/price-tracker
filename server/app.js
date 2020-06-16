@@ -7,8 +7,9 @@ var cors = require('cors');
 var graphqlHTTP = require('express-graphql');
 var mongoClient = require("mongodb").MongoClient;
 var { buildSchema } = require('graphql');
-
-var indexRouter = require('./routes/index');
+const mongoURL = "mongodb://localhost:27017/"
+const dbName = "test";
+const collectionName = "product";
 
 var schema = buildSchema(`
   type Product {
@@ -20,15 +21,15 @@ var schema = buildSchema(`
     price: String
     img: String
   }
+  type ProductPrice {
+    id: String
+    price: String
+    date: String
+  }
   type Query {
     getProducts: [Product],
     getProductInfo(id: String): Product
-  }
-  type Mutation {
-    updateProductInfo(id: String, shop: String, brand: String, name: String, url: String, price: String): Boolean
-    createProduct(id: String, shop: String, brand: String, name: String, url: String, price: String): Boolean
-    deleteUser(id: Int): Boolean
-
+    getProductPrice(id: String): ProductPrice
   }
 `);
 
@@ -73,9 +74,6 @@ app.use(function(err, req, res, next) {
 });
 
 async function getAllProduct() {
-  const mongoURL = "mongodb://localhost:27017/"
-  const dbName = "test";
-  const collectionName = "product";
   let client;
   try {
     client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
@@ -91,9 +89,6 @@ async function getAllProduct() {
 }
 
 async function getProduct(req) {
-  const mongoURL = "mongodb://localhost:27017/"
-  const dbName = "test";
-  const collectionName = "product";
   let client;
   console.log(req.id);
   try {
@@ -108,5 +103,7 @@ async function getProduct(req) {
     client.close();
   }
 }
+
+
 
 module.exports = app;
