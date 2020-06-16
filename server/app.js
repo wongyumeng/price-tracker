@@ -1,17 +1,15 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require('cors');
-var graphqlHTTP = require('express-graphql');
-var mongoClient = require("mongodb").MongoClient;
-var { buildSchema } = require('graphql');
-const mongoURL = "mongodb://localhost:27017/"
-const dbName = "test";
-const collectionName = "product";
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const graphqlHTTP = require('express-graphql');
+const { buildSchema } = require('graphql');
+const repository = require('./repository')
 
-var schema = buildSchema(`
+
+const schema = buildSchema(`
   type Product {
     id: String
     shop: String
@@ -33,12 +31,12 @@ var schema = buildSchema(`
   }
 `);
 
-var root = {
-  getProducts: () => getAllProduct(),
+const root = {
+  getProducts: () => repository.getAllProduct(),
   getProductInfo: (req) => getProduct(req)
 };
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -72,37 +70,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-async function getAllProduct() {
-  let client;
-  try {
-    client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-    const result = await collection.find({}).toArray();
-    return result;
-  } catch(e) {
-    console.error(e);
-  } finally {
-    client.close();
-  }
-}
-
-async function getProduct(req) {
-  let client;
-  console.log(req.id);
-  try {
-    client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
-    const db = client.db(dbName);
-    const collection = db.collection(collectionName);
-    const result = await collection.findOne({ id: String(req.id) });
-    return result;
-  } catch(e) {
-    console.error(e);
-  } finally {
-    client.close();
-  }
-}
 
 
 
