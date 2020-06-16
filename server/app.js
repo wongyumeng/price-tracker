@@ -4,37 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-const graphqlHTTP = require('express-graphql');
-const { buildSchema } = require('graphql');
-const repository = require('./repository')
-
-
-const schema = buildSchema(`
-  type Product {
-    id: String
-    shop: String
-    brand: String
-    name: String
-    link: String
-    price: String
-    img: String
-  }
-  type ProductPrice {
-    id: String
-    price: String
-    date: String
-  }
-  type Query {
-    getProducts: [Product],
-    getProductInfo(id: String): Product
-    getProductPrice(id: String): ProductPrice
-  }
-`);
-
-const root = {
-  getProducts: () => repository.getAllProduct(),
-  getProductInfo: (req) => getProduct(req)
-};
+const graphql = require('./controller')
 
 const app = express();
 
@@ -49,16 +19,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true,
-}));
+
+app.use('/', graphql);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
 
 // error handler
 app.use(function(err, req, res, next) {
