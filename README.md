@@ -15,13 +15,3 @@ WIP
 * authorization
 * search
 * mailing
-
-## Research later
-
-* Docker
-* Jenkins
-* gRPC
-* nginx
-* redis
-* elasticsearch
-* websockets
