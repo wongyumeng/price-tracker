@@ -25,3 +25,11 @@ query($id: String) {
     img
   }
 }`;
+
+export const GET_PRODUCT_PRICES = gql`
+query($id: String) {
+  getProductPrices(id: $id) {
+    price
+    date
+  }
+}`;

@@ -5,7 +5,7 @@ import Header from './header';
 const Layout = (props) => {
   return (
     <div>
-    <Container flex>
+    <Container>
       <Header/>
       {props.children}
     </Container>

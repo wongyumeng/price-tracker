@@ -40,7 +40,8 @@ async function getProductPricesById(id_) {
     client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductPriceCollection);
-    const result = await collection.find({ id: String(id_) });
+    const result = await collection.find({ id: String(id_) }).toArray();
+    console.log(result);
     return result;
   } catch(e) {
     console.error(e);

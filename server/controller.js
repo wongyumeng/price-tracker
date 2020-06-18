@@ -20,14 +20,14 @@ type ProductPrice {
 type Query {
   getProducts: [Product],
   getProductInfo(id: String): Product
-  getProductPrice(id: String): [ProductPrice]
+  getProductPrices(id: String): [ProductPrice]
 }
 `);
 
 const root = {
   getProducts: () => repository.getAllProducts(),
   getProductInfo: (req) => repository.getProductById(req.id),
-  getProductPricesById: (req) => repository.getProductPricesById(req.id)
+  getProductPrices: (req) => repository.getProductPricesById(req.id)
 };
 
 const graphql = graphqlHTTP({
