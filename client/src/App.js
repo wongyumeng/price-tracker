@@ -6,13 +6,10 @@ import Home from './component/home';
 import Products from './component/products';
 import Calculator from './component/calculator';
 import Product from './component/product';
+import * as V from 'victory';
 import './App.css'
 
 function App() {
-  // const getAllProducts = useQuery(GET_PRODUCTS);
-  // console.log(getAllProducts);
-  // if (getAllProducts.loading) return <p>Hello</p>
-  // if (getAllProducts.error) return <React.Fragment>Error :(</React.Fragment>;
 
   return (
     <Router>
