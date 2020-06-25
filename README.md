@@ -1,17 +1,5 @@
 # price-tracker
 
-WIP
+## Introduction
 
-## Todo
-
-* Price in a new collection
-* Charting price over time
-* Pagination
-* Sorting results
-* Serve images from local server
-* caching?
-* session and cookies?
-* authentication
-* authorization
-* search
-* mailing
+A web app that collate data from retailers. Users will be able to search for products and check the product's historical price (WIP).
