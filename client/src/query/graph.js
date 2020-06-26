@@ -33,3 +33,11 @@ query($id: String) {
     date
   }
 }`;
+
+export const GET_COUNT = gql`
+{
+  getCount {
+    count
+  }
+}
+`

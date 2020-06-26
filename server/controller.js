@@ -17,17 +17,22 @@ type ProductPrice {
   price: String
   date: String
 }
+type ProductCount {
+  count: Int
+}
 type Query {
   getProducts: [Product],
   getProductInfo(id: String): Product
   getProductPrices(id: String): [ProductPrice]
+  getCount(id: String): ProductCount
 }
 `);
 
 const root = {
   getProducts: () => repository.getAllProducts(),
   getProductInfo: (req) => repository.getProductById(req.id),
-  getProductPrices: (req) => repository.getProductPricesById(req.id)
+  getProductPrices: (req) => repository.getProductPricesById(req.id),
+  getCount: () => repository.getCount()
 };
 
 const graphql = graphqlHTTP({
