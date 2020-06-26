@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col'
 import { VictoryLine, VictoryChart, VictoryAxis } from 'victory';
 
 
-const Product = ({ match, location }) => {
+const Product = ({ match }) => {
   const { params: { id } } = match;
   // const { loading, error, data } = useQuery(GET_PRODUCT, { variables: { id: id}});
   const product = useQuery(GET_PRODUCT, { variables: { id: id}});

@@ -15,7 +15,7 @@ function App() {
     <Router>
       <Layout>
           <Route path='/home' component={Home} />
-          <Route path='/products' component={Products} />
+          <Route path='/products/:page?' component={Products} />
           <Route path='/calculator' component={Calculator} />
           <Route path='/product/:id' component={Product}/>
       </Layout>

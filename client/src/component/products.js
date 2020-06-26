@@ -23,7 +23,13 @@ const wrapCards = (cards) => {
 }
 
 const Products = ({ match }) => {
-  console.log(match);
+  const productCount = 30;
+  const { params: { pageCount } } = match;
+  if (pageCount == undefined || pageCount <= 1) {
+    const page = 1;
+  } else {
+    const page = pageCount;
+  }
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
   if (loading) return 'Loading...';
