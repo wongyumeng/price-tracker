@@ -15,21 +15,22 @@ const wrapCards = (cards) => {
     }
     deck[index].push(card);
   })
-  return deck.map(cards => 
-    <CardDeck>
+  return deck.map((cards, index) => 
+    <CardDeck key={index}>
       {cards}
     </CardDeck>
   );
 }
 
-const Products = (props) => {
+const Products = ({ match }) => {
+  console.log(match);
   const { loading, error, data } = useQuery(GET_PRODUCTS);
 
   if (loading) return 'Loading...';
   if (error) return `Error! ${error.message}`;
 
   const cards = data.getProducts.map(product => 
-    <Card>
+    <Card key={product.id}>
       <Card.Img src={product.img} />
       <Card.Body>
         <Card.Title>{product.brand}</Card.Title>
@@ -39,7 +40,7 @@ const Products = (props) => {
         <Card.Text>
           {product.price}
         </Card.Text>
-        <Link class=" stretched-link" to={`/product/${product.id}`}></Link>
+        <Link className=" stretched-link" to={`/product/${product.id}`}></Link>
       </Card.Body>
     </Card>
   );
