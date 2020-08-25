@@ -19,13 +19,16 @@ async function getCount() {
   }
 }
 
-async function getAllProducts() {
+async function getAllProducts(count, page) {
   let client;
   try {
+    const currentPageNumber = page - 1;
+    const skipped = count * currentPageNumber;
+    console.log(skipped);
     client = await mongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductCollection);
-    const result = await collection.find({}).toArray();
+    const result = await collection.find({}).skip(skipped).limit(count).toArray();
     return result;
   } catch(e) {
     console.error(e);
@@ -69,4 +72,5 @@ module.exports = {
   getProductById,
   getAllProducts,
   getProductPricesById,
+  getCount
 };

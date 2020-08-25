@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export const GET_PRODUCTS = gql`
-{
-  getProducts {
+query($page: Int, $count: Int)    {
+  getProducts(page: $page, count: $count) {
     id
     name
     shop
@@ -36,8 +36,20 @@ query($id: String) {
 
 export const GET_COUNT = gql`
 {
-  getCount {
-    count
-  }
+  getCount
 }
 `
+
+export const GET_COUNT_AND_PRODUCTS = gql`
+query($page: Int, $count: Int)    {
+  getCount
+  getProducts(page: $page, count: $count) {
+    id
+    name
+    shop
+    brand
+    link
+    price
+    img
+  }
+}`

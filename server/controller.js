@@ -17,19 +17,16 @@ type ProductPrice {
   price: String
   date: String
 }
-type ProductCount {
-  count: Int
-}
 type Query {
-  getProducts: [Product],
+  getProducts(count: Int, page: Int): [Product],
   getProductInfo(id: String): Product
   getProductPrices(id: String): [ProductPrice]
-  getCount(id: String): ProductCount
+  getCount: Int
 }
 `);
 
 const root = {
-  getProducts: () => repository.getAllProducts(),
+  getProducts: (req) => repository.getAllProducts(req.count, req.page),
   getProductInfo: (req) => repository.getProductById(req.id),
   getProductPrices: (req) => repository.getProductPricesById(req.id),
   getCount: () => repository.getCount()
