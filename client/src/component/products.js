@@ -93,14 +93,15 @@ const setUpPages = (currentPage, totalRecords) => {
 
 const Products = ({ match, location }) => {
   let pageNumber;
+  const pA = [];
+  const pB = [];
   const pageLimit = 30;
   const { params: { page } } = match;
-  const params = new URLSearchParams(location.search);
-  console.log(page);
-  console.log(location);
-  console.log(match);
-  for (let p of params) {
-    console.log(p);
+  const searchParams = new URLSearchParams(location.search);
+
+  for (let p of searchParams) {
+    pA.push(p[0]);
+    pB.push(p[1]);
   }
   if (page == undefined || page <= 1) {
     pageNumber = 1;
@@ -108,7 +109,7 @@ const Products = ({ match, location }) => {
     pageNumber = Number(page);
   }
   const { loading: loadingC, error: errorC, data: dataC } = useQuery(GET_COUNT);
-  const { loading, error, data } = useQuery(GET_PRODUCTS, { variables: { count: pageLimit, page: pageNumber }});
+  const { loading, error, data } = useQuery(GET_PRODUCTS, { variables: { count: pageLimit, page: pageNumber, paramA: pA, paramB: pB }});
 
   if (loading || loadingC) return 'Loading...';
   if (error || errorC) return `Error! ${error.message} ${errorC.message}`;
@@ -116,7 +117,6 @@ const Products = ({ match, location }) => {
   if (pageNumber > Math.ceil(dataC.getCount/pageLimit)) {
     return `Error! Page not found`;
   }
-
 
   const pages = setUpPages(pageNumber, dataC.getCount);
   const cards = data.getProducts.map(product => 
