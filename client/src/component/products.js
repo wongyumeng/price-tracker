@@ -6,7 +6,9 @@ import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card'
 import Pagination from 'react-bootstrap/Pagination'
 import PageItem from 'react-bootstrap/PageItem'
+import Nav from 'react-bootstrap/Nav'
 
+const BACKARROW = "<"
 
 const wrapCards = (cards) => {
   const deck = [];
@@ -18,9 +20,12 @@ const wrapCards = (cards) => {
     deck[index].push(card);
   })
   return deck.map((cards, index) => 
-    <CardDeck key={index}>
-      {cards}
-    </CardDeck>
+    <>
+      <CardDeck key={index}>
+        {cards}
+      </CardDeck>
+      <br></br>
+    </>
   );
 }
 
@@ -31,30 +36,47 @@ const setUpPages = (currentPage, totalRecords) => {
   const totalPages = Math.ceil(totalRecords/pageLimit);
   if (currentPage <= 1) {
     items.push(
-      <Pagination.Prev></Pagination.Prev>
+      <Pagination.Prev active="false" ></Pagination.Prev>
     );
   }
   else {
     items.push(
-      <Pagination.Prev>
-        <Link className=" stretched-link" to={`/products/${currentPage - 1}`}></Link>
-      </Pagination.Prev>
+      <li className="page-item">
+        <span className="page-link">
+          {BACKARROW}
+          <Link className="stretched-link" to={`/products/${currentPage - 1}`}></Link>
+        </span>
+      </li>
     );
   }
   for (let number = initialPage; number <= currentPage + 2; number++) {
     if (number <= totalPages) {
-      items.push(
-        <Pagination.Item key={number} active={number === currentPage}>
-          {number}
-          <Link className=" stretched-link" to={`/products/${number}`}></Link>
-        </Pagination.Item>
-      );
+      if (number === currentPage) {
+        items.push(
+          <li className="page-item active">
+            <span className="page-link">
+              {number}
+              <Link className="stretched-link" to={`/products/${number}`}></Link>
+            </span>
+          </li>
+        )
+      }
+      else {
+        items.push(
+          <li className="page-item">
+            <span className="page-link">
+              {number}
+              <Link className="stretched-link" to={`/products/${number}`}></Link>
+            </span>
+          </li>
+        )
+      }
     }
     else {
       break;
     }
   }
-  if (currentPage >= totalRecords) {
+  if (currentPage >= totalPages) {
     items.push(
       <Pagination.Next></Pagination.Next>
     );
@@ -69,10 +91,17 @@ const setUpPages = (currentPage, totalRecords) => {
   return items;
 }
 
-const Products = ({ match }) => {
+const Products = ({ match, location }) => {
   let pageNumber;
   const pageLimit = 30;
   const { params: { page } } = match;
+  const params = new URLSearchParams(location.search);
+  console.log(page);
+  console.log(location);
+  console.log(match);
+  for (let p of params) {
+    console.log(p);
+  }
   if (page == undefined || page <= 1) {
     pageNumber = 1;
   } else {
@@ -109,10 +138,20 @@ const Products = ({ match }) => {
   
   return (
     <>
-    <p>Found {dataC.getCount} products</p>
-    {wrapCards(cards)}
-    <br></br>
-    <Pagination>{pages}</Pagination>
+      <Nav defaultActiveKey="/home" className="col-md-2 d-none d-md-block bg-light sidebar">
+        <Nav.Link href="/home">Active</Nav.Link>
+        <Nav.Link eventKey="link-1">Link</Nav.Link>
+        <Nav.Link eventKey="link-2">Link</Nav.Link>
+        <Nav.Link eventKey="disabled" disabled>
+          Disabled
+        </Nav.Link>
+      </Nav>
+      <>
+        <p>Found {dataC.getCount} products</p>
+        {wrapCards(cards)}
+      </>
+      <br></br>
+      <Pagination>{pages}</Pagination>
     </>
   );
 }

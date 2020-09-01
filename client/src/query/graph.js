@@ -1,8 +1,8 @@
 import { gql } from 'apollo-boost';
 
 export const GET_PRODUCTS = gql`
-query($page: Int, $count: Int)    {
-  getProducts(page: $page, count: $count) {
+query($page: Int, $count: Int, $paramA: [String]!, $paramB: [String]!)    {
+  getProducts(page: $page, count: $count, paramA: $paramA, paramB: $paramB) {
     id
     name
     shop

@@ -5,13 +5,14 @@ import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import { Link } from 'react-router-dom';
+import Container from 'react-bootstrap/Container'
 
 
 
 const Header = () => {
   return (
     <header>
-      <Navbar bg="light" expand="lg">
+      <Navbar>
         <Navbar.Brand as={Link} to="/home">Price Tracker</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
