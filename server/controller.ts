@@ -1,3 +1,5 @@
+export {};
+
 const { buildSchema } = require('graphql');
 const repository = require('./repository')
 const graphqlHTTP = require('express-graphql');
@@ -18,7 +20,7 @@ type ProductPrice {
   date: String
 }
 type Query {
-  getProducts(count: Int, page: Int, paramA: String!, paramB: String!): [Product],
+  getProducts(count: Int, page: Int, paramA: [String], paramB: [String]): [Product],
   getProductInfo(id: String): Product
   getProductPrices(id: String): [ProductPrice]
   getCount: Int

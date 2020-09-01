@@ -50,12 +50,12 @@ async function getCount(): Promise<number> {
   }
 }
 
-async function getAllProducts(count, page, paramA, paramB) {
+async function getAllProducts(count: number, page: number, paramA: string[], paramB: string[]): Promise<any[]> {
   let client: MongoClient;
   try {
     const currentPageNumber = page - 1;
     const skipped = count * currentPageNumber;
-    console.log(skipped);
+    console.log(paramA, paramB);
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductCollection);
@@ -68,7 +68,7 @@ async function getAllProducts(count, page, paramA, paramB) {
   }
 }
 
-async function getProductById(id_) {
+async function getProductById(id_: string) {
   let client: MongoClient;
   try {
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
@@ -83,7 +83,7 @@ async function getProductById(id_) {
   }
 }
 
-async function getProductPricesById(id_) {
+async function getProductPricesById(id_: string) {
   let client: MongoClient;
   try {
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
