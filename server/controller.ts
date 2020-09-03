@@ -2,7 +2,7 @@ export {};
 
 const { buildSchema } = require('graphql');
 const repository = require('./repository')
-const graphqlHTTP = require('express-graphql');
+const { graphqlHTTP } = require('express-graphql');
 
 const schema = buildSchema(`
 type Product {

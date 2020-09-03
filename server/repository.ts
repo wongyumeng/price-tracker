@@ -10,7 +10,14 @@ type SearchParams = {
 }
 
 type MongoFilterQuery = {
-  $and: string[]
+  $and?: FineQuery[] | FineQuery
+  $or?: FineQuery[]
+}
+
+type FineQuery = string | field
+
+type field = {
+  [key: string]: string
 }
 
 function combine(A: string[], B: string[]): SearchParams  {
@@ -23,16 +30,25 @@ return params;
 }
 
 function mongoFilter(params: SearchParams) {
-  const findQuery: MongoFilterQuery = {
+  const findQuery = {
     $and: []
   };
   Object.entries(params).forEach(param => {
-    const query = {};
+    const query = {}
     if (param[1].length == 1) {
-
+      query[param[0]] = param[1][0];
+      findQuery.$and.push(query);
+    } else {
+      query["$or"] = [];
+      param[1].forEach(p => {
+        const q = {};
+        q[param[0]] = p;
+        query["$or"].push(q);
+      });
+      findQuery.$and.push(query);
     }
   })
-  return 
+  return findQuery;
 }
 
 async function getCount(): Promise<number> {
@@ -42,6 +58,7 @@ async function getCount(): Promise<number> {
     const db: Db = client.db(dbName);
     const collection: Collection = db.collection(ProductCollection);
     const result: number = await collection.countDocuments({});
+    console.log(result);
     return result;
   } catch(e) {
     console.error(e);
@@ -55,7 +72,10 @@ async function getAllProducts(count: number, page: number, paramA: string[], par
   try {
     const currentPageNumber = page - 1;
     const skipped = count * currentPageNumber;
+    const params = combine(paramA, paramB);
     console.log(paramA, paramB);
+    console.log(params);
+    console.log(JSON.stringify(mongoFilter(params)));
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductCollection);
