@@ -9,6 +9,7 @@ query($page: Int, $count: Int, $paramA: [String], $paramB: [String])    {
     brand
     link
     price
+    priceValue
     img
   }
 }`;
@@ -39,17 +40,3 @@ export const GET_COUNT = gql`
   getCount
 }
 `
-
-export const GET_COUNT_AND_PRODUCTS = gql`
-query($page: Int, $count: Int)    {
-  getCount
-  getProducts(page: $page, count: $count) {
-    id
-    name
-    shop
-    brand
-    link
-    price
-    img
-  }
-}`

@@ -33,6 +33,18 @@ function mongoFilter(params: SearchParams) {
   const findQuery = {
     $and: []
   };
+  if ("MinPrice" in params || "MaxPrice" in params) {
+    const priceQuery = { priceValue: {}};
+    if ("MinPrice" in params) {
+      priceQuery.priceValue["$gte"] = Number(params["MinPrice"]);
+      delete params["MinPrice"];
+    }
+    if ("MaxPrice" in params) {
+      priceQuery.priceValue["$lte"] = Number(params["MaxPrice"]);
+      delete params["MaxPrice"];
+    }
+    findQuery.$and.push(priceQuery);
+  }
   Object.entries(params).forEach(param => {
     const query = {}
     if (param[1].length == 1) {
@@ -72,14 +84,13 @@ async function getAllProducts(count: number, page: number, paramA: string[], par
   try {
     const currentPageNumber = page - 1;
     const skipped = count * currentPageNumber;
-    const params = combine(paramA, paramB);
-    console.log(paramA, paramB);
-    console.log(params);
-    console.log(JSON.stringify(mongoFilter(params)));
+    const params = paramA.length > 0 ? mongoFilter(combine(paramA, paramB)) : {};
+    console.log(params)
+    console.log(JSON.stringify(params));
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductCollection);
-    const result = await collection.find({}).skip(skipped).limit(count).toArray();
+    const result = await collection.find(params).skip(skipped).limit(count).toArray();
     return result;
   } catch(e) {
     console.error(e);

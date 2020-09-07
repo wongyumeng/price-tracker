@@ -12,11 +12,14 @@ type Product {
   name: String
   link: String
   price: String
+  priceValue: Float
+  currency: String
   img: String
 }
 type ProductPrice {
   id: String
   price: String
+  priceValue: Float
   date: String
 }
 type Query {
