@@ -108,7 +108,7 @@ const Products = ({ match, location }) => {
   } else {
     pageNumber = Number(page);
   }
-  const { loading: loadingC, error: errorC, data: dataC } = useQuery(GET_COUNT);
+  const { loading: loadingC, error: errorC, data: dataC } = useQuery(GET_COUNT, { variables: { paramA: pA, paramB: pB }});
   const { loading, error, data } = useQuery(GET_PRODUCTS, { variables: { count: pageLimit, page: pageNumber, paramA: pA, paramB: pB }});
 
   if (loading || loadingC) return 'Loading...';

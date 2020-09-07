@@ -63,13 +63,14 @@ function mongoFilter(params: SearchParams) {
   return findQuery;
 }
 
-async function getCount(): Promise<number> {
+async function getCount(paramA: string[], paramB: string[]): Promise<number> {
   let client: MongoClient;
   try {
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
+    const params = paramA.length > 0 ? mongoFilter(combine(paramA, paramB)) : {};
     const db: Db = client.db(dbName);
     const collection: Collection = db.collection(ProductCollection);
-    const result: number = await collection.countDocuments({});
+    const result: number = await collection.countDocuments(params);
     console.log(result);
     return result;
   } catch(e) {

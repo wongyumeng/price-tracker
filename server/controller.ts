@@ -26,15 +26,15 @@ type Query {
   getProducts(count: Int, page: Int, paramA: [String], paramB: [String]): [Product],
   getProductInfo(id: String): Product
   getProductPrices(id: String): [ProductPrice]
-  getCount: Int
+  getCount(paramA: [String], paramB: [String]): Int
 }
 `);
 
 const root = {
+  getCount: (req) => repository.getCount(req.paramA, req.paramB),
   getProducts: (req) => repository.getAllProducts(req.count, req.page, req.paramA, req.paramB),
   getProductInfo: (req) => repository.getProductById(req.id),
-  getProductPrices: (req) => repository.getProductPricesById(req.id),
-  getCount: () => repository.getCount()
+  getProductPrices: (req) => repository.getProductPricesById(req.id)
 };
 
 const graphql = graphqlHTTP({
