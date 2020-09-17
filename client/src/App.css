@@ -1,0 +1,19 @@
+.container-products {
+    display: flex;
+}
+
+.label-filter {
+    width: 40%;
+}
+
+.container-random {
+    display: flex;
+}
+
+.fixed {
+    width: 80%;
+}
+
+.sidebar {
+    flex-grow: 1;
+}
