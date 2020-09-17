@@ -1,16 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { GET_PRODUCTS, GET_COUNT } from "../query/graph";
 import CardDeck from 'react-bootstrap/CardDeck'
 import { Link } from 'react-router-dom';
-import Card from 'react-bootstrap/Card'
-import Pagination from 'react-bootstrap/Pagination'
-import PageItem from 'react-bootstrap/PageItem'
-import Nav from 'react-bootstrap/Nav'
+import Card from 'react-bootstrap/Card';
+import Pagination from 'react-bootstrap/Pagination';
 
-const BACKARROW = "<"
+const BACKARROW = "<";
 
-const wrapCards = (cards) => {
+const SortBy = () => {
+  return (
+    <form className="fixed">
+      <select name="sort">
+          <option value="">Sort By</option>
+          <option value="priceAsc">Price Low to High</option>
+          <option value="priceDsc">Price High to Low</option>
+          <option value="brand">Brand</option>
+          <option value="shop">Shop</option>
+      </select>
+    </form>
+  );
+}
+
+const SideBarFilter = (props) => {
+  const brands = [];
+  const shops = [];
+  const items = props.items;
+  items.forEach(item => {
+    brands.push(item.brand);
+    shops.push(item.shop);
+  });
+
+  const InputFilter = (category, list) => {
+    const formList = list.map(el => {
+      return (
+        <>
+          <label className="label-filter"> {el} </label>
+          <input name={category.toLowerCase()} type="checkbox" value={el}/>
+          <br/>
+        </>
+      );
+    })
+    return (
+      <fieldset>
+        <legend>{category}</legend>
+        {formList}
+      </fieldset>
+    );
+  }
+
+  const handleSubmit = (e) => {
+    alert("submitted");
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        {InputFilter("Brand", [...new Set(brands)])}
+        {InputFilter("Shop", [...new Set(shops)])}
+        <label>
+          Minimum Price: 
+          <input name="MinPrice" value="123"/>
+        </label>
+        <br></br>
+        <label>
+          Maximum Price: 
+          <input name="MaxPrice" type="number"/>
+        </label>
+        <input type="submit" value="Submit"/>
+      </form>
+    </>
+  );
+}
+
+const WrapCards = (props) => {
+  const cards = props.cards;
   const deck = [];
   cards.forEach((card, i) => {
     const index = Math.floor(i/5);
@@ -20,12 +84,9 @@ const wrapCards = (cards) => {
     deck[index].push(card);
   })
   return deck.map((cards, index) => 
-    <>
       <CardDeck key={index}>
         {cards}
       </CardDeck>
-      <br></br>
-    </>
   );
 }
 
@@ -36,12 +97,12 @@ const setUpPages = (currentPage, totalRecords) => {
   const totalPages = Math.ceil(totalRecords/pageLimit);
   if (currentPage <= 1) {
     items.push(
-      <Pagination.Prev active="false" ></Pagination.Prev>
+      <Pagination.Prev active="false" key={items.length}></Pagination.Prev>
     );
   }
   else {
     items.push(
-      <li className="page-item">
+      <li className="page-item" key={items.length}>
         <span className="page-link">
           {BACKARROW}
           <Link className="stretched-link" to={`/products/${currentPage - 1}`}></Link>
@@ -53,7 +114,7 @@ const setUpPages = (currentPage, totalRecords) => {
     if (number <= totalPages) {
       if (number === currentPage) {
         items.push(
-          <li className="page-item active">
+          <li className="page-item active" key={items.length}>
             <span className="page-link">
               {number}
               <Link className="stretched-link" to={`/products/${number}`}></Link>
@@ -63,7 +124,7 @@ const setUpPages = (currentPage, totalRecords) => {
       }
       else {
         items.push(
-          <li className="page-item">
+          <li className="page-item" key={items.length}>
             <span className="page-link">
               {number}
               <Link className="stretched-link" to={`/products/${number}`}></Link>
@@ -78,12 +139,12 @@ const setUpPages = (currentPage, totalRecords) => {
   }
   if (currentPage >= totalPages) {
     items.push(
-      <Pagination.Next></Pagination.Next>
+      <Pagination.Next key={items.length}></Pagination.Next>
     );
   }
   else {
     items.push(
-      <Pagination.Next>
+      <Pagination.Next key={items.length}>
         <Link className=" stretched-link" to={`/products/${currentPage + 1}`}></Link>
       </Pagination.Next>
     );
@@ -138,18 +199,16 @@ const Products = ({ match, location }) => {
   
   return (
     <>
-      <Nav defaultActiveKey="/home" className="col-md-2 d-none d-md-block bg-light sidebar">
-        <Nav.Link href="/home">Active</Nav.Link>
-        <Nav.Link eventKey="link-1">Link</Nav.Link>
-        <Nav.Link eventKey="link-2">Link</Nav.Link>
-        <Nav.Link eventKey="disabled" disabled>
-          Disabled
-        </Nav.Link>
-      </Nav>
-      <>
-        <p>Found {dataC.getCount} products</p>
-        {wrapCards(cards)}
-      </>
+      <SortBy/>
+      <p>Found {dataC.getCount} products</p>
+        <div class="container-random">
+          <div className="sidebar">
+            <SideBarFilter className="sidebar" items={data.getProducts}/>
+          </div>
+          <div className="fixed">
+            <WrapCards className="fixed" cards={cards}/>
+          </div>
+        </div>
       <br></br>
       <Pagination>{pages}</Pagination>
     </>
