@@ -5,14 +5,21 @@ import CardDeck from 'react-bootstrap/CardDeck'
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
 import Pagination from 'react-bootstrap/Pagination';
+import { useHistory } from "react-router-dom";
 
 const BACKARROW = "<";
 
-const SortBy = () => {
+const SortBy = (props) => {
+  const [sortValue, setSortValue] = useState("");
+  const history = useHistory();
+  const handleChange = (e) => {
+    setSortValue(e.target.value);
+    history.push(props.pathName + props.searchQuery + `?sort=${e.target.value}`);
+  }
+
   return (
     <form className="fixed">
-      <select name="sort">
-          <option value="">Sort By</option>
+      <select name="sort" value={sortValue} onChange={handleChange}>
           <option value="priceAsc">Price Low to High</option>
           <option value="priceDsc">Price High to Low</option>
           <option value="brand">Brand</option>
@@ -26,6 +33,8 @@ const SideBarFilter = (props) => {
   const brands = [];
   const shops = [];
   const items = props.items;
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   items.forEach(item => {
     brands.push(item.brand);
     shops.push(item.shop);
@@ -53,6 +62,15 @@ const SideBarFilter = (props) => {
     alert("submitted");
   }
 
+  const handleChange = (e) => {
+    if (e.target.name === "MinPrice") {
+      setMinPrice(e.target.value);
+    }
+    if (e.target.name === "MaxPrice") {
+      setMaxPrice(e.target.value);
+    }
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -60,14 +78,14 @@ const SideBarFilter = (props) => {
         {InputFilter("Shop", [...new Set(shops)])}
         <label>
           Minimum Price: 
-          <input name="MinPrice" value="123"/>
+          <input disabled name="MinPrice" value={minPrice} onChange={handleChange}/>
         </label>
         <br></br>
         <label>
           Maximum Price: 
-          <input name="MaxPrice" type="number"/>
+          <input disabled name="MaxPrice" value={maxPrice} onChange={handleChange}/>
         </label>
-        <input type="submit" value="Submit"/>
+        <input type="submit" value="Submit" onSubmit={handleSubmit}/>
       </form>
     </>
   );
@@ -90,7 +108,7 @@ const WrapCards = (props) => {
   );
 }
 
-const setUpPages = (currentPage, totalRecords) => {
+const setUpPages = (currentPage, totalRecords, searchQuery) => {
   const pageLimit = 30;
   const items = [];
   const initialPage = currentPage - 3 <= 1 ? 1 : currentPage;
@@ -105,7 +123,7 @@ const setUpPages = (currentPage, totalRecords) => {
       <li className="page-item" key={items.length}>
         <span className="page-link">
           {BACKARROW}
-          <Link className="stretched-link" to={`/products/${currentPage - 1}`}></Link>
+          <Link className="stretched-link" to={`/products/${currentPage - 1}` + searchQuery}></Link>
         </span>
       </li>
     );
@@ -117,7 +135,7 @@ const setUpPages = (currentPage, totalRecords) => {
           <li className="page-item active" key={items.length}>
             <span className="page-link">
               {number}
-              <Link className="stretched-link" to={`/products/${number}`}></Link>
+              <Link className="stretched-link" to={`/products/${number}` + searchQuery}></Link>
             </span>
           </li>
         )
@@ -127,7 +145,7 @@ const setUpPages = (currentPage, totalRecords) => {
           <li className="page-item" key={items.length}>
             <span className="page-link">
               {number}
-              <Link className="stretched-link" to={`/products/${number}`}></Link>
+              <Link className="stretched-link" to={`/products/${number}` + searchQuery}></Link>
             </span>
           </li>
         )
@@ -145,7 +163,7 @@ const setUpPages = (currentPage, totalRecords) => {
   else {
     items.push(
       <Pagination.Next key={items.length}>
-        <Link className=" stretched-link" to={`/products/${currentPage + 1}`}></Link>
+        <Link className=" stretched-link" to={`/products/${currentPage + 1}` + searchQuery}></Link>
       </Pagination.Next>
     );
   }
@@ -153,13 +171,13 @@ const setUpPages = (currentPage, totalRecords) => {
 }
 
 const Products = ({ match, location }) => {
+  console.log(location);
   let pageNumber;
   const pA = [];
   const pB = [];
   const pageLimit = 30;
   const { params: { page } } = match;
   const searchParams = new URLSearchParams(location.search);
-
   for (let p of searchParams) {
     pA.push(p[0]);
     pB.push(p[1]);
@@ -179,7 +197,7 @@ const Products = ({ match, location }) => {
     return `Error! Page not found`;
   }
 
-  const pages = setUpPages(pageNumber, dataC.getCount);
+  const pages = setUpPages(pageNumber, dataC.getCount, location.search);
   const cards = data.getProducts.map(product => 
     <Card key={product.id}>
       <Card.Img src={product.img} />
@@ -191,7 +209,7 @@ const Products = ({ match, location }) => {
         <Card.Text>
           {product.price}
         </Card.Text>
-        <Link className=" stretched-link" to={`/product/${product.id}`}></Link>
+        <Link className="stretched-link" to={`/product/${product.id}`}></Link>
       </Card.Body>
     </Card>
   );
@@ -199,9 +217,9 @@ const Products = ({ match, location }) => {
   
   return (
     <>
-      <SortBy/>
+      <SortBy pathName={location.pathname} searchQuery={location.search}/>
       <p>Found {dataC.getCount} products</p>
-        <div class="container-random">
+        <div className="container-random">
           <div className="sidebar">
             <SideBarFilter className="sidebar" items={data.getProducts}/>
           </div>
