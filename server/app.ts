@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const compression = require('compression');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -8,6 +9,7 @@ const graphql = require('./controller')
 
 const app = express();
 
+app.use(compression());
 app.use(logger('dev'));
 app.use(cors());
 app.use(express.json());

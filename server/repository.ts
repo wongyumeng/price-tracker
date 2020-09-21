@@ -29,6 +29,36 @@ function combine(A: string[], B: string[]): SearchParams  {
 return params; 
 }
 
+function mongoSort(params: SearchParams) {
+  if (!("sort" in params)) {
+    return {}
+  }
+  const key = params["sort"][0];
+  if (key === "priceAsc") {
+    return {priceValue: 1};
+  }
+  if (key === "priceDsc") {
+    return {priceValue: -1};
+  }
+  if (key === "brand") {
+    return {brand: 1};
+  }
+  if (key === "shop") {
+    return {shop: 1};
+  }
+  return {};
+}
+
+function continueFilter(l: string[]): boolean {
+  if (l.length > 1) {
+    return true;
+  }
+  if (l.length === 0) {
+    return false;
+  }
+  return "sort" in l ? false : true;
+}
+
 function mongoFilter(params: SearchParams) {
   const findQuery = {
     $and: []
@@ -46,6 +76,9 @@ function mongoFilter(params: SearchParams) {
     findQuery.$and.push(priceQuery);
   }
   Object.entries(params).forEach(param => {
+    if (param[0] === "sort") {
+      return;
+    }
     const query = {}
     if (param[1].length == 1) {
       query[param[0]] = param[1][0];
@@ -67,7 +100,7 @@ async function getCount(paramA: string[], paramB: string[]): Promise<number> {
   let client: MongoClient;
   try {
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
-    const params = paramA.length > 0 ? mongoFilter(combine(paramA, paramB)) : {};
+    const params = continueFilter(paramA) ? mongoFilter(combine(paramA, paramB)) : {};
     const db: Db = client.db(dbName);
     const collection: Collection = db.collection(ProductCollection);
     const result: number = await collection.countDocuments(params);
@@ -85,13 +118,15 @@ async function getAllProducts(count: number, page: number, paramA: string[], par
   try {
     const currentPageNumber = page - 1;
     const skipped = count * currentPageNumber;
-    const params = paramA.length > 0 ? mongoFilter(combine(paramA, paramB)) : {};
+    const params = combine(paramA, paramB)
+    const paramsFilter = continueFilter(paramA) ? mongoFilter(params) : {};
     console.log(params)
     console.log(JSON.stringify(params));
+
     client = await MongoClient.connect(mongoURL, {useUnifiedTopology: true});
     const db = client.db(dbName);
     const collection = db.collection(ProductCollection);
-    const result = await collection.find(params).skip(skipped).limit(count).toArray();
+    const result = await collection.find(paramsFilter).sort(mongoSort(params)).skip(skipped).limit(count).toArray();
     return result;
   } catch(e) {
     console.error(e);
