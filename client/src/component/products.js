@@ -29,34 +29,37 @@ const SortBy = (props) => {
   );
 }
 
+const InputFilter = (props) => {
+  const formList = props.obj.list.map(el => (
+      <>
+        <label className="label-filter"> {el} </label>
+        <input name={props.obj.category.toLowerCase()} type="checkbox" value={el}/>
+        <br/>
+      </>
+    )
+  )
+  return (
+    <fieldset>
+      <legend>{props.obj.category}</legend>
+      {formList}
+    </fieldset>
+  );
+}
+
 const SideBarFilter = (props) => {
-  const brands = [];
-  const shops = [];
-  const items = props.items;
+  const brands = { category: "Brand", list: [] };
+  const shops = { category: "Shop", list: [] };
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
-  items.forEach(item => {
-    brands.push(item.brand);
-    shops.push(item.shop);
-  });
 
-  const InputFilter = (category, list) => {
-    const formList = list.map(el => {
-      return (
-        <>
-          <label className="label-filter"> {el} </label>
-          <input name={category.toLowerCase()} type="checkbox" value={el}/>
-          <br/>
-        </>
-      );
-    })
-    return (
-      <fieldset>
-        <legend>{category}</legend>
-        {formList}
-      </fieldset>
-    );
-  }
+  props.items.forEach(item => {
+    if (!(shops.list.includes(item.shop))) {
+      shops.list.push(item.shop);
+    }
+    if (!(brands.list.includes(item.brand))) {
+      brands.list.push(item.brand);
+    }
+  });
 
   const handleSubmit = (e) => {
     alert("submitted");
@@ -74,8 +77,8 @@ const SideBarFilter = (props) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        {InputFilter("Brand", [...new Set(brands)])}
-        {InputFilter("Shop", [...new Set(shops)])}
+        <InputFilter obj={shops} />
+        <InputFilter obj={brands} />
         <label>
           Minimum Price: 
           <input disabled name="MinPrice" value={minPrice} onChange={handleChange}/>
