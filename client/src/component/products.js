@@ -10,22 +10,13 @@ import { useHistory } from "react-router-dom";
 const BACKARROW = "<";
 
 const SortBy = (props) => {
-  const [sortValue, setSortValue] = useState("");
-  const history = useHistory();
-  const handleChange = (e) => {
-    setSortValue(e.target.value);
-    history.push(props.pathName + props.searchQuery + `?sort=${e.target.value}`);
-  }
-
   return (
-    <form className="fixed">
-      <select name="sort" value={sortValue} onChange={handleChange}>
-          <option value="priceAsc">Price Low to High</option>
-          <option value="priceDsc">Price High to Low</option>
-          <option value="brand">Brand</option>
-          <option value="shop">Shop</option>
-      </select>
-    </form>
+    <select value={props.sorting} onChange={props.handleChange}>
+        <option value="priceAsc">Price Low to High</option>
+        <option value="priceDsc">Price High to Low</option>
+        <option value="brand">Brand</option>
+        <option value="shop">Shop</option>
+    </select>
   );
 }
 
@@ -50,6 +41,7 @@ const InputFilter = (props) => {
 const SideBarFilter = (props) => {
   const brands = { category: "Brand", list: {} };
   const shops = { category: "Shop", list: {} };
+  const [sorting, setSorting] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
@@ -68,6 +60,7 @@ const SideBarFilter = (props) => {
 
   const handleSubmit = (e) => {
     alert("submitted");
+    e.preventDefault();
   }
 
   const handleChange = (e) => {
@@ -93,21 +86,28 @@ const SideBarFilter = (props) => {
     });
   }
 
+  const handleSortChange = (e) => {
+    console.log(e.target.value, sorting, 12)
+    setSorting(e.target.value);
+    console.log(e.target.value, sorting, 12)
+  };
+
   return (
     <>
       <form onSubmit={handleSubmit}>
+        <SortBy sorting={sorting} handleChange={handleSortChange} pathName={props.pathName} searchQuery={props.searchQuery}/>
         <InputFilter obj={s} handleChange={handleCheckboxChange} useSet={setS}/>
         <InputFilter obj={b} handleChange={handleCheckboxChange} useSet={setB}/>
         <label>
           Minimum Price: 
-          <input disabled name="MinPrice" value={minPrice} onChange={handleChange}/>
+          <input name="MinPrice" value={minPrice} onChange={handleChange}/>
         </label>
         <br></br>
         <label>
           Maximum Price: 
-          <input disabled name="MaxPrice" value={maxPrice} onChange={handleChange}/>
+          <input name="MaxPrice" value={maxPrice} onChange={handleChange}/>
         </label>
-        <input type="submit" value="Submit" onSubmit={handleSubmit}/>
+        <input type="submit" value="Submit"/>
       </form>
     </>
   );
@@ -239,11 +239,10 @@ const Products = ({ match, location }) => {
   
   return (
     <>
-      <SortBy pathName={location.pathname} searchQuery={location.search}/>
       <p>Found {dataC.getCount} products</p>
         <div className="container-random">
           <div className="sidebar">
-            <SideBarFilter className="sidebar" items={data.getProducts}/>
+            <SideBarFilter className="sidebar" items={data.getProducts} pathName={location.pathname} searchQuery={location.search}/>
           </div>
           <div className="fixed">
             <WrapCards className="fixed" cards={cards}/>
