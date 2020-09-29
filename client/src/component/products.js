@@ -30,36 +30,41 @@ const SortBy = (props) => {
 }
 
 const InputFilter = (props) => {
-  const formList = props.obj.list.map(el => (
+  const formList = Object.entries(props.obj.list).map(el => {
+    return (
       <>
-        <label className="label-filter"> {el} </label>
-        <input name={props.obj.category.toLowerCase()} type="checkbox" value={el}/>
+        <label className="label-filter"> {el[0]} </label>
+        <input type="checkbox" checked={el[1]} onChange={(e) => props.handleChange(e, props.useSet)} value={el[0]}/>
         <br/>
       </>
     )
-  )
+    })
   return (
     <fieldset>
       <legend>{props.obj.category}</legend>
-      {formList}
+        {formList}
     </fieldset>
   );
 }
 
 const SideBarFilter = (props) => {
-  const brands = { category: "Brand", list: [] };
-  const shops = { category: "Shop", list: [] };
+  const brands = { category: "Brand", list: {} };
+  const shops = { category: "Shop", list: {} };
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
   props.items.forEach(item => {
-    if (!(shops.list.includes(item.shop))) {
-      shops.list.push(item.shop);
+    if (!(item.shops in shops.list)) {
+      shops.list[item.shop] = false
     }
-    if (!(brands.list.includes(item.brand))) {
-      brands.list.push(item.brand);
+    if (!(item.brand in brands.list)) {
+      brands.list[item.brand] = false
     }
   });
+
+  const [b, setB] = useState(brands);
+  const [s, setS] = useState(shops);
+
 
   const handleSubmit = (e) => {
     alert("submitted");
@@ -74,11 +79,25 @@ const SideBarFilter = (props) => {
     }
   }
 
+  const handleCheckboxChange = (e, setFunc) => {
+    let myValue = e.target.value;
+    setFunc(prevState => {
+      const newState = { 
+        category: prevState.category,
+        list: {
+          ...prevState.list
+        }
+      };
+      newState.list[myValue] = !newState.list[myValue];
+      return newState;
+    });
+  }
+
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <InputFilter obj={shops} />
-        <InputFilter obj={brands} />
+        <InputFilter obj={s} handleChange={handleCheckboxChange} useSet={setS}/>
+        <InputFilter obj={b} handleChange={handleCheckboxChange} useSet={setB}/>
         <label>
           Minimum Price: 
           <input disabled name="MinPrice" value={minPrice} onChange={handleChange}/>
